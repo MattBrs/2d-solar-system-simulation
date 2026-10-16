@@ -23,7 +23,7 @@ endif()
 find_package(raylib_cpp QUIET)
 if (NOT raylib_cpp_FOUND)
     if (NOT DEFINED RAYLIB_CPP_VERSION)
-        set(RAYLIB_CPP_VERSION master)
+        set(RAYLIB_CPP_VERSION v6.0.3)
     endif()
     include(FetchContent)
     FetchContent_Declare(
