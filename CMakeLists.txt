@@ -1,21 +1,38 @@
 cmake_minimum_required(VERSION 4.4.4)
+project(2d-solar-system-simulation)
 set(CMAKE_CXX_STANDARD 26)
-
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 include(FetchContent)
 
-project(2d-solar-system-simulation)
 
+# raylib
+find_package(raylib QUIET)
+if (NOT raylib_FOUND)
+    include(FetchContent)
+    FetchContent_Declare(
+        raylib
+        GIT_REPOSITORY https://github.com/raysan5/raylib.git
+        GIT_TAG 6.0
+        GIT_SHALLOW 1
+    )
+    FetchContent_MakeAvailable(raylib)
+endif()
 
-set(RAYLIB_VERSION 6.0)
-FetchContent_Declare(
-    raylib
-    DOWNLOAD_EXTRACT_TIMESTAMP OFF
-    URL https://github.com/raysan5/raylib/archive/refs/tags/${RAYLIB_VERSION}.tar.gz
-    FIND_PACKAGE_ARGS
-)
-FetchContent_MakeAvailable(raylib)
-
+# raylib-cpp
+find_package(raylib_cpp QUIET)
+if (NOT raylib_cpp_FOUND)
+    if (NOT DEFINED RAYLIB_CPP_VERSION)
+        set(RAYLIB_CPP_VERSION master)
+    endif()
+    include(FetchContent)
+    FetchContent_Declare(
+        raylib_cpp
+        GIT_REPOSITORY https://github.com/RobLoach/raylib-cpp.git
+        GIT_TAG ${RAYLIB_CPP_VERSION}
+    )
+    FetchContent_MakeAvailable(raylib_cpp)
+endif()
 
 FetchContent_Declare(
     flecs
@@ -28,11 +45,16 @@ FetchContent_MakeAvailable(flecs)
 add_executable(${PROJECT_NAME})
 target_sources(${PROJECT_NAME} PRIVATE main.cpp)
 
-
-target_link_libraries(${PROJECT_NAME} raylib flecs::flecs_static ) 
+target_link_libraries(${PROJECT_NAME} PUBLIC 
+    raylib 
+    raylib_cpp 
+    flecs::flecs_static
+)
 
 if (APPLE)
-    target_link_libraries(${PROJECT_NAME} "-framework IOKit")
-    target_link_libraries(${PROJECT_NAME} "-framework Cocoa")
-    target_link_libraries(${PROJECT_NAME} "-framework OpenGL")
+    target_link_libraries(${PROJECT_NAME} PRIVATE
+        "-framework IOKit"
+        "-framework Cocoa"
+        "-framework OpenGL"
+    )
 endif()
