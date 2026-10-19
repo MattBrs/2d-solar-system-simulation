@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 4.4.4)
+cmake_minimum_required(VERSION 4.2.3)
 project(2d-solar-system-simulation)
 set(CMAKE_CXX_STANDARD 26)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
